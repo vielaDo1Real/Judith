@@ -1,12 +1,17 @@
+// Path: frontend/src/pages/Login.js
 import React from 'react';
+
+const NGROK_URL = process.env.REACT_APP_NGROK_URL || 'https://localhost:5000';
 
 const Login = () => {
   return (
-    <div>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Login</h1>
-      <a href="http://localhost:5000/auth/google">Login with Google</a>
-      <a href="http://localhost:5000/auth/twitter">Login with Twitter</a>
-      <a href="http://localhost:5000/auth/discord">Login with Discord</a>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <a href={`${NGROK_URL}/auth/google`} style={{ padding: '10px', background: '#4285f4', color: 'white', textDecoration: 'none' }}>Login com Google</a>
+        <a href={`${NGROK_URL}/auth/twitter`} style={{ padding: '10px', background: '#1da1f2', color: 'white', textDecoration: 'none' }}>Login com Twitter</a>
+        <a href={`${NGROK_URL}/auth/discord`} style={{ padding: '10px', background: '#7289da', color: 'white', textDecoration: 'none' }}>Login com Discord</a>
+      </div>
     </div>
   );
 };

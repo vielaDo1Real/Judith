@@ -1,11 +1,16 @@
+// Path: backend/models/User.js
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
-  googleId: String,
-  twitterId: String,
-  discordId: String,
-  username: String,
-  email: String,
-});
+const userSchema = new mongoose.Schema({
+  googleId: { type: String, index: true, sparse: true },
+  twitterId: { type: String, index: true, sparse: true },
+  discordId: { type: String, index: true, sparse: true },
+  displayName: String,
+  email: { type: String, required: false },
+  token: { type: String, required: false },
+  tokenSecret: { type: String, required: false },
+}, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;

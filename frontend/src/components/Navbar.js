@@ -1,3 +1,4 @@
+// Path: frontend/src/components/Navbar.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../logo.svg';
@@ -6,20 +7,21 @@ import logoIcon from '../logo.svg';
 
 const Navbar = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isAuthenticated = !!localStorage.getItem('token');
 
-  // Função para alternar o modo escuro
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    setDarkMode(prev => !prev);
     localStorage.setItem('darkMode', !darkMode);
+    console.log('Dark Mode:', !darkMode); // Debug
   };
 
-  // Verificar o tema salvo no localStorage ao carregar o componente
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
   }, []);
 
-  // Aplicar o tema ao body
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark-mode');
@@ -28,77 +30,51 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
-  const menuFunc = () => {
-    const listMenu = document.getElementById("list_menu");
-    if (listMenu.style.display === "block") {
-      listMenu.style.display = "none";
-    } else {
-      listMenu.style.display = "block";
-    }
-  };
-
-  const scrollFunction = () => {
-    if (window.scrollY > 80 || document.documentElement.scrollTop > 80) {
-      document.getElementById("logo").style.width = "150px";
-      document.getElementById("logo_icon").style.width = "60px";
-      document.getElementById("endereco_row").style.marginTop = "9px";
-      document.getElementById("endereco_row").style.marginBottom = "0px";
-      document.getElementById("endereco_row").style.transition = "0.2s linear";
-      document.getElementById("logo_mobile").style.width = "110px";
-      document.getElementById("icon_btn").style.fontSize = "35px";
-      document.getElementById("icon_btn").style.margin = "2px";
-    } else {
-      document.getElementById("logo").style.width = "300px";
-      document.getElementById("logo_icon").style.width = "100px";
-      document.getElementById("endereco_row").style.marginTop = "22.825px";
-      document.getElementById("endereco_row").style.transition = "0.2s linear";
-      document.getElementById("logo_mobile").style.width = "230px";
-      document.getElementById("icon_btn").style.fontSize = "58px";
-      document.getElementById("icon_btn").style.margin = "10.15px";
-    }
-  };
-
   useEffect(() => {
-    window.addEventListener('scroll', scrollFunction);
-    return () => {
-      window.removeEventListener('scroll', scrollFunction);
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 80 || document.documentElement.scrollTop > 80;
+      setIsScrolled(scrolled);
     };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <header className={darkMode ? 'dark-mode' : ''}>
+    <header className={darkMode ? 'dark-mode' : ''} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
       <div id="menu" className="menu">
         <Link to="/">
-          <img id="logo" className="logo" src={logo} alt="Logo" />
+          <img id="logo" className="logo" src={logo} alt="Logo" style={{ width: isScrolled ? '150px' : '300px', transition: '0.2s linear' }} />
         </Link>
         <div className="menu_right" id="menu_principal">
           <Link id="btn_menu" className="btn_menu" to="/">Home</Link>
           <Link id="btn_menu" className="btn_menu" to="/login">Login</Link>
           <Link id="btn_menu" className="btn_menu" to="/dashboard">Dashboard</Link>
+          {isAuthenticated && (
+            <button onClick={() => localStorage.removeItem('token')} className="btn_menu">Logout</button>
+          )}
         </div>
         <div className="menu_right" id="icon_menu">
-          <a href="javascript:void(0)" onClick={menuFunc} className="icon_menu">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="icon_menu" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: isScrolled ? '35px' : '58px', margin: isScrolled ? '2px' : '10.15px', transition: '0.2s linear' }}>
             <i id="icon_btn" className="fa fa-bars"></i>
-          </a>
-          <img className="menu_right" id="logo_mobile" src={logo} alt="Logo Mobile" />
+          </button>
+          <img className="menu_right" id="logo_mobile" src={logo} alt="Logo Mobile" style={{ width: isScrolled ? '110px' : '230px', transition: '0.2s linear' }} />
         </div>
-        <div id="endereco_row" className="endereco">
-          <a href="">
-            <img id="logo_icon" className="logo_icon" src={logoIcon} alt="Ícone" />
+        <div id="endereco_row" className="endereco" style={{ marginTop: isScrolled ? '9px' : '22.825px', marginBottom: isScrolled ? '0px' : '22.825px', transition: '0.2s linear' }}>
+          <a href="#">
+            <img id="logo_icon" className="logo_icon" src={logoIcon} alt="Ícone" style={{ width: isScrolled ? '60px' : '100px', transition: '0.2s linear' }} />
           </a>
         </div>
-        {/* Botão para alternar o modo escuro */}
         <button onClick={toggleDarkMode} className="dark-mode-toggle">
           {darkMode ? '🌞' : '🌙'}
         </button>
       </div>
-      <div className="list_menu" id="list_menu">
+      <div className={`list_menu ${isMenuOpen ? 'visible' : 'hidden'}`} id="list_menu">
         <ul className="list" id="list">
-          <li><Link to="/">Início</Link></li>
-          <li><Link to="/cadastro">Cadastro</Link></li>
-          <li><Link to="/logout">Sair</Link></li>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
           <li style={{ alignItems: 'center' }}>
-            <img id="logo_icon" className="logo_icon" src={logoIcon} alt="Ícone" />
+            <img id="logo_icon" className="logo_icon" src={logoIcon} alt="Ícone" style={{ width: isScrolled ? '60px' : '100px', transition: '0.2s linear' }} />
           </li>
         </ul>
       </div>

@@ -37,41 +37,6 @@
   }
 }
 
-.menu {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f8f9fa;
-}
-
-.menu_right {
-  display: flex;
-  align-items: center;
-}
-
-.btn_menu {
-  margin: 0 10px;
-  text-decoration: none;
-  color: #000;
-}
-
-.list_menu {
-  display: none;
-  position: absolute;
-  background-color: #f8f9fa;
-  padding: 10px;
-}
-
-.list_menu ul {
-  list-style: none;
-  padding: 0;
-}
-
-.list_menu li {
-  margin: 10px 0;
-}
-
 .page-footer {
   background-color: #f8f9fa;
   padding: 20px;
@@ -80,37 +45,4 @@
 
 .footer-copyright {
   margin-top: 10px;
-}
-
-/* Estilos para o modo escuro */
-body.dark-mode {
-  background-color: #121212;
-  color: #ffffff;
-}
-
-.dark-mode .menu {
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-.dark-mode .btn_menu {
-  color: #ffffff;
-}
-
-.dark-mode .list_menu {
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-.dark-mode .list_menu a {
-  color: #ffffff;
-}
-
-/* Botão de alternar modo escuro */
-.dark-mode-toggle {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  margin-left: 10px;
 }
