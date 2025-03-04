@@ -25,7 +25,7 @@ module.exports = (passport) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'https://judith-app.ngrok-free.app/auth/google/callback',
+  callbackURL: 'https://dodo-sterling-globally.ngrok-free.app/auth/google/callback',
   scope: ['profile', 'email'],
 }, async (accessToken, refreshToken, profile, done) => {
   console.log('Google Auth Response:', { accessToken, profile }); // Debug
