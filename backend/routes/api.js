@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
-// Path: backend/routes/api.js (adicionar ao final)
 const Notification = require('../models/Notification');
-// Path: backend/routes/api.js (adicionar ao final)
 const TrackedProfile = require('../models/TrackedProfile');
+const twitterService = require('../services/twitterService');
+
 
 
 router.get('/data', auth, (req, res) => {
@@ -17,35 +17,7 @@ router.get('/stats', auth, async (req, res) => {
   res.json({ posts: 42, followers: 100, user: req.user });
 });
 
-// Configuração OAuth para Twitter API
-const oauth = OAuth({
-  consumer: {
-    key: process.env.TWITTER_CONSUMER_KEY,
-    secret: process.env.TWITTER_CONSUMER_SECRET,
-  },
-  signature_method: 'HMAC-SHA1',
-  hash_function(base_string, key) {
-    return crypto.createHmac('sha1', key).update(base_string).digest('base64');
-  },
-});
-
-// Função para buscar dados do Twitter
-const twitterRequest = async (url, token, tokenSecret) => {
-  const requestData = {
-    url,
-    method: 'GET',
-  };
-  const tokenData = {
-    key: token,
-    secret: tokenSecret,
-  };
-
-  const headers = oauth.toHeader(oauth.authorize(requestData, tokenData));
-  const response = await axios.get(url, { headers });
-  return response.data;
-};
-
-// Endpoint para buscar seguidores do usuário autenticado
+// Endpoint para buscar seguidores
 router.get('/followers', auth, async (req, res) => {
   try {
     const user = req.user;
@@ -53,11 +25,7 @@ router.get('/followers', auth, async (req, res) => {
       return res.status(400).json({ message: 'Usuário não autenticado via Twitter' });
     }
 
-    const followers = await twitterRequest(
-      `https://api.twitter.com/1.1/followers/list.json?user_id=${user.twitterId}&count=20`,
-      user.token,
-      user.tokenSecret
-    );
+    const followers = await twitterService.getFollowers(user.twitterId, user.token, user.tokenSecret);
     res.json({ followers });
   } catch (err) {
     console.error('Erro ao buscar seguidores:', err);
@@ -65,7 +33,7 @@ router.get('/followers', auth, async (req, res) => {
   }
 });
 
-// Endpoint para buscar últimos posts do usuário autenticado ou de outro perfil
+// Endpoint para buscar posts
 router.get('/posts/:userId?', auth, async (req, res) => {
   try {
     const user = req.user;
@@ -75,11 +43,7 @@ router.get('/posts/:userId?', auth, async (req, res) => {
       return res.status(400).json({ message: 'Usuário não autenticado via Twitter' });
     }
 
-    const posts = await twitterRequest(
-      `https://api.twitter.com/1.1/statuses/user_timeline.json?user_id=${targetUserId}&count=10`,
-      user.token,
-      user.tokenSecret
-    );
+    const posts = await twitterService.getPosts(targetUserId, user.token, user.tokenSecret);
     res.json({ posts });
   } catch (err) {
     console.error('Erro ao buscar posts:', err);
